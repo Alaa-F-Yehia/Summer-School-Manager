@@ -1,6 +1,7 @@
 import { Class, Teacher, Announcement, Enrollment } from '@/types';
 
 export const mockClasses: Class[] = [
+  // Original classes
   {
     id: '1',
     name: 'Advanced Mathematics',
@@ -48,6 +49,259 @@ export const mockClasses: Class[] = [
     enrolled: 22,
     category: 'History',
     level: 'intermediate'
+  },
+  // New classes from pathway recommendations
+  {
+    id: '5',
+    name: 'Advanced Programming & Algorithms',
+    description: 'Dive deep into programming concepts, data structures, and algorithm design.',
+    teacher: 'Dr. Alex Kumar',
+    teacherId: '5',
+    schedule: 'Mon, Wed, Fri 1:00-2:30 PM',
+    capacity: 20,
+    enrolled: 12,
+    category: 'Computer Science',
+    level: 'advanced'
+  },
+  {
+    id: '6',
+    name: 'Engineering Mathematics',
+    description: 'Applied mathematics for engineering and technical problem-solving.',
+    teacher: 'Prof. Lisa Martinez',
+    teacherId: '6',
+    schedule: 'Tue, Thu 9:00-10:30 AM',
+    capacity: 25,
+    enrolled: 16,
+    category: 'Mathematics',
+    level: 'intermediate'
+  },
+  {
+    id: '7',
+    name: 'Competition Mathematics',
+    description: 'Advanced problem-solving techniques and mathematical competitions.',
+    teacher: 'Dr. Sarah Johnson',
+    teacherId: '1',
+    schedule: 'Sat 10:00-12:00 PM',
+    capacity: 15,
+    enrolled: 8,
+    category: 'Mathematics',
+    level: 'advanced'
+  },
+  {
+    id: '8',
+    name: 'Advanced Biology & Research Methods',
+    description: 'Explore cellular biology, genetics, and scientific research techniques.',
+    teacher: 'Dr. Maria Santos',
+    teacherId: '7',
+    schedule: 'Mon, Wed, Fri 10:00-11:30 AM',
+    capacity: 20,
+    enrolled: 14,
+    category: 'Science',
+    level: 'advanced'
+  },
+  {
+    id: '9',
+    name: 'Environmental Science & Sustainability',
+    description: 'Study ecosystems, climate change, and sustainable practices.',
+    teacher: 'Prof. John Green',
+    teacherId: '8',
+    schedule: 'Tue, Thu 2:00-3:30 PM',
+    capacity: 25,
+    enrolled: 18,
+    category: 'Science',
+    level: 'intermediate'
+  },
+  {
+    id: '10',
+    name: 'Experimental Physics Laboratory',
+    description: 'Hands-on experiments with mechanics, electricity, and modern physics.',
+    teacher: 'Dr. Robert Kim',
+    teacherId: '9',
+    schedule: 'Wed, Fri 3:00-4:30 PM',
+    capacity: 16,
+    enrolled: 11,
+    category: 'Science',
+    level: 'intermediate'
+  },
+  {
+    id: '11',
+    name: 'Advanced Chemistry & Lab Techniques',
+    description: 'Organic and inorganic chemistry with extensive laboratory work.',
+    teacher: 'Prof. Anna Petrov',
+    teacherId: '10',
+    schedule: 'Mon, Wed 2:00-3:30 PM',
+    capacity: 18,
+    enrolled: 13,
+    category: 'Science',
+    level: 'advanced'
+  },
+  {
+    id: '12',
+    name: 'Robotics & Programming',
+    description: 'Learn to build and program robots using modern technologies.',
+    teacher: 'Dr. Tech Williams',
+    teacherId: '11',
+    schedule: 'Tue, Thu 1:00-2:30 PM',
+    capacity: 20,
+    enrolled: 17,
+    category: 'Technology',
+    level: 'intermediate'
+  },
+  {
+    id: '13',
+    name: 'Public Speaking & Debate',
+    description: 'Master the art of persuasive communication and debate techniques.',
+    teacher: 'Prof. Michael Chen',
+    teacherId: '2',
+    schedule: 'Mon, Wed 3:00-4:30 PM',
+    capacity: 20,
+    enrolled: 15,
+    category: 'Communication',
+    level: 'intermediate'
+  },
+  {
+    id: '14',
+    name: 'Student Journalism & Media',
+    description: 'Learn news writing, interviewing, and digital media production.',
+    teacher: 'Ms. Rachel Taylor',
+    teacherId: '12',
+    schedule: 'Tue, Thu 10:00-11:30 AM',
+    capacity: 15,
+    enrolled: 9,
+    category: 'Media',
+    level: 'intermediate'
+  },
+  {
+    id: '15',
+    name: 'Sports Science & Fitness',
+    description: 'Learn about exercise physiology, nutrition, and athletic performance.',
+    teacher: 'Coach Mark Davis',
+    teacherId: '13',
+    schedule: 'Mon, Wed, Fri 4:00-5:30 PM',
+    capacity: 25,
+    enrolled: 20,
+    category: 'Sports',
+    level: 'intermediate'
+  },
+  {
+    id: '16',
+    name: 'Advanced Arabic Literature',
+    description: 'Explore classical and modern Arabic literature and poetry.',
+    teacher: 'Prof. Ahmed Hassan',
+    teacherId: '14',
+    schedule: 'Tue, Thu 11:00-12:30 PM',
+    capacity: 20,
+    enrolled: 12,
+    category: 'Languages',
+    level: 'intermediate'
+  },
+  {
+    id: '17',
+    name: 'Digital Art & Design',
+    description: 'Learn digital illustration, graphic design, and visual communication.',
+    teacher: 'Ms. Sophie Clark',
+    teacherId: '15',
+    schedule: 'Mon, Wed 1:00-2:30 PM',
+    capacity: 18,
+    enrolled: 14,
+    category: 'Arts',
+    level: 'beginner'
+  },
+  {
+    id: '18',
+    name: 'Young Entrepreneurs Program',
+    description: 'Learn business fundamentals, marketing, and startup development.',
+    teacher: 'Mr. James Wilson',
+    teacherId: '16',
+    schedule: 'Fri 2:00-4:00 PM',
+    capacity: 20,
+    enrolled: 11,
+    category: 'Business',
+    level: 'intermediate'
+  },
+  {
+    id: '19',
+    name: 'Digital Music Production',
+    description: 'Learn to create, record, and produce music using digital tools.',
+    teacher: 'Prof. Nina Jazz',
+    teacherId: '17',
+    schedule: 'Sat 2:00-4:00 PM',
+    capacity: 15,
+    enrolled: 8,
+    category: 'Music',
+    level: 'intermediate'
+  },
+  {
+    id: '20',
+    name: 'Photography & Visual Storytelling',
+    description: 'Master composition, lighting, and digital photo editing techniques.',
+    teacher: 'Mr. Carlos Photo',
+    teacherId: '18',
+    schedule: 'Thu, Sat 10:00-11:30 AM',
+    capacity: 16,
+    enrolled: 10,
+    category: 'Arts',
+    level: 'beginner'
+  },
+  {
+    id: '21',
+    name: 'Health & Wellness Studies',
+    description: 'Learn about nutrition, fitness, and promoting healthy lifestyles.',
+    teacher: 'Dr. Emma Health',
+    teacherId: '19',
+    schedule: 'Wed, Fri 1:00-2:30 PM',
+    capacity: 22,
+    enrolled: 16,
+    category: 'Health',
+    level: 'beginner'
+  },
+  {
+    id: '22',
+    name: 'Web Development Bootcamp',
+    description: 'Build real websites and web applications using modern technologies.',
+    teacher: 'Dr. Emily Rodriguez',
+    teacherId: '3',
+    schedule: 'Mon, Wed, Fri 2:00-3:30 PM',
+    capacity: 20,
+    enrolled: 18,
+    category: 'Computer Science',
+    level: 'intermediate'
+  },
+  {
+    id: '23',
+    name: 'Independent Project Workshop',
+    description: 'Work on long-term projects in your areas of interest with mentor guidance.',
+    teacher: 'Various Mentors',
+    teacherId: '20',
+    schedule: 'Flexible scheduling',
+    capacity: 12,
+    enrolled: 7,
+    category: 'Project Work',
+    level: 'intermediate'
+  },
+  {
+    id: '24',
+    name: 'Team Collaboration & Leadership',
+    description: 'Develop teamwork skills through group projects and leadership activities.',
+    teacher: 'Coach Leadership',
+    teacherId: '21',
+    schedule: 'Tue, Thu 3:00-4:30 PM',
+    capacity: 18,
+    enrolled: 13,
+    category: 'Leadership',
+    level: 'intermediate'
+  },
+  {
+    id: '25',
+    name: 'Study Skills & Time Management',
+    description: 'Learn effective study techniques and time management strategies.',
+    teacher: 'Ms. Study Skills',
+    teacherId: '22',
+    schedule: 'Mon, Wed 11:00-12:00 PM',
+    capacity: 25,
+    enrolled: 19,
+    category: 'Academic Skills',
+    level: 'beginner'
   }
 ];
 
