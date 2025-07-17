@@ -19,8 +19,14 @@ interface AssessmentData {
   roboticsGrade: number;
   interests: string[];
   hobbies: string[];
-  careerGoals: string;
-  learningPreference: string;
+  learningPreferences: {
+    handsOn: boolean;
+    groupWork: boolean;
+    visual: boolean;
+    independent: boolean;
+    projects: boolean;
+    discussions: boolean;
+  };
 }
 
 interface RecommendedClass {
@@ -45,8 +51,14 @@ const PathwayRecommendation = () => {
     roboticsGrade: 50,
     interests: [],
     hobbies: [],
-    careerGoals: '',
-    learningPreference: ''
+    learningPreferences: {
+      handsOn: false,
+      groupWork: false,
+      visual: false,
+      independent: false,
+      projects: false,
+      discussions: false
+    }
   });
   const [recommendations, setRecommendations] = useState<RecommendedClass[]>([]);
 
@@ -82,18 +94,13 @@ const PathwayRecommendation = () => {
     'Writing', 'Building/Crafting', 'Traveling', 'Volunteering'
   ];
 
-  const careerGoalOptions = [
-    'Technology/Software', 'Healthcare', 'Business/Finance', 'Education',
-    'Arts/Entertainment', 'Science/Research', 'Engineering', 'Law/Politics',
-    'Sports/Fitness', 'Social Work', 'Undecided', 'Entrepreneurship'
-  ];
-
-  const learningPreferenceOptions = [
-    { value: 'hands-on', label: 'Hands-on/Practical Learning' },
-    { value: 'theoretical', label: 'Theoretical/Conceptual Learning' },
-    { value: 'visual', label: 'Visual Learning (Charts, Diagrams)' },
-    { value: 'collaborative', label: 'Group Work & Collaboration' },
-    { value: 'independent', label: 'Independent Study' }
+  const learningPreferenceQuestions = [
+    { key: 'handsOn', label: 'I learn best by doing things with my hands', description: 'Building, experimenting, and trying things out' },
+    { key: 'groupWork', label: 'I enjoy working with others in groups', description: 'Team projects and collaborative learning' },
+    { key: 'visual', label: 'I understand better with pictures and diagrams', description: 'Charts, images, and visual representations' },
+    { key: 'independent', label: 'I prefer to study and learn on my own', description: 'Self-paced learning and individual work' },
+    { key: 'projects', label: 'I like working on long-term projects', description: 'Building something over time step by step' },
+    { key: 'discussions', label: 'I learn well through talking and discussions', description: 'Explaining ideas and asking questions' }
   ];
 
   const updateAssessmentData = (key: keyof AssessmentData, value: any) => {
@@ -113,10 +120,20 @@ const PathwayRecommendation = () => {
     });
   };
 
+  const toggleLearningPreference = (key: keyof AssessmentData['learningPreferences']) => {
+    setAssessmentData(prev => ({
+      ...prev,
+      learningPreferences: {
+        ...prev.learningPreferences,
+        [key]: !prev.learningPreferences[key]
+      }
+    }));
+  };
+
   // Rule-based recommendation engine
   const generateRecommendations = (): RecommendedClass[] => {
     const recs: RecommendedClass[] = [];
-    const { arabicGrade, mathGrade, englishGrade, chemistryGrade, biologyGrade, physicsGrade, sportsGrade, roboticsGrade, interests, hobbies, careerGoals, learningPreference } = assessmentData;
+    const { arabicGrade, mathGrade, englishGrade, chemistryGrade, biologyGrade, physicsGrade, sportsGrade, roboticsGrade, interests, hobbies, learningPreferences } = assessmentData;
 
     // Math-based courses
     if (mathGrade >= 70) {
@@ -129,7 +146,7 @@ const PathwayRecommendation = () => {
           reason: 'Strong math skills and programming interest detected'
         });
       }
-      if (interests.includes('Engineering') || careerGoals === 'Technology/Software') {
+      if (interests.includes('Engineering')) {
         recs.push({
           id: 'engineering-math',
           name: 'Engineering Mathematics',
@@ -138,17 +155,24 @@ const PathwayRecommendation = () => {
           reason: 'Excellent math foundation with engineering interests'
         });
       }
+      recs.push({
+        id: 'competitive-math',
+        name: 'Competition Mathematics',
+        description: 'Advanced problem-solving techniques and mathematical competitions.',
+        difficulty: mathGrade >= 85 ? 'Advanced' : 'Intermediate',
+        reason: 'Strong mathematical abilities for competitive challenges'
+      });
     }
 
     // Science-based courses
     if (chemistryGrade >= 70 || biologyGrade >= 70 || physicsGrade >= 70) {
-      if (interests.includes('Science & Research') || careerGoals === 'Healthcare') {
+      if (interests.includes('Science & Research') || interests.includes('Healthcare & Medicine')) {
         recs.push({
           id: 'advanced-biology',
           name: 'Advanced Biology & Research Methods',
           description: 'Explore cellular biology, genetics, and scientific research techniques.',
           difficulty: (biologyGrade >= 85 || chemistryGrade >= 85) ? 'Advanced' : 'Intermediate',
-          reason: 'Strong science background with research/healthcare interests'
+          reason: 'Strong science background with research interests'
         });
       }
       if (interests.includes('Environment & Nature')) {
@@ -158,6 +182,24 @@ const PathwayRecommendation = () => {
           description: 'Study ecosystems, climate change, and sustainable practices.',
           difficulty: 'Intermediate',
           reason: 'Science aptitude combined with environmental interests'
+        });
+      }
+      if (physicsGrade >= 70) {
+        recs.push({
+          id: 'physics-lab',
+          name: 'Experimental Physics Laboratory',
+          description: 'Hands-on experiments with mechanics, electricity, and modern physics.',
+          difficulty: physicsGrade >= 85 ? 'Advanced' : 'Intermediate',
+          reason: 'Strong physics foundation for experimental work'
+        });
+      }
+      if (chemistryGrade >= 70) {
+        recs.push({
+          id: 'chemistry-lab',
+          name: 'Advanced Chemistry & Lab Techniques',
+          description: 'Organic and inorganic chemistry with extensive laboratory work.',
+          difficulty: chemistryGrade >= 85 ? 'Advanced' : 'Intermediate',
+          reason: 'Strong chemistry skills for advanced laboratory work'
         });
       }
     }
@@ -184,7 +226,7 @@ const PathwayRecommendation = () => {
           reason: 'Strong English skills with writing interests'
         });
       }
-      if (interests.includes('Languages & Communication') || careerGoals === 'Law/Politics') {
+      if (interests.includes('Languages & Communication')) {
         recs.push({
           id: 'public-speaking',
           name: 'Public Speaking & Debate',
@@ -193,6 +235,13 @@ const PathwayRecommendation = () => {
           reason: 'Excellent communication skills detected'
         });
       }
+      recs.push({
+        id: 'journalism',
+        name: 'Student Journalism & Media',
+        description: 'Learn news writing, interviewing, and digital media production.',
+        difficulty: 'Intermediate',
+        reason: 'Strong English skills for media and communication'
+      });
     }
 
     // Sports courses
@@ -229,18 +278,51 @@ const PathwayRecommendation = () => {
     }
 
     // Business courses
-    if (interests.includes('Business & Economics') || careerGoals === 'Business/Finance') {
+    if (interests.includes('Business & Economics')) {
       recs.push({
         id: 'entrepreneurship',
         name: 'Young Entrepreneurs Program',
         description: 'Learn business fundamentals, marketing, and startup development.',
         difficulty: 'Intermediate',
-        reason: 'Business interests align with entrepreneurial goals'
+        reason: 'Business interests perfect for entrepreneurial learning'
       });
     }
 
-    // Hands-on learning preference courses
-    if (learningPreference === 'hands-on') {
+    // Music & Arts courses
+    if (interests.includes('Music & Performance') || hobbies.includes('Music')) {
+      recs.push({
+        id: 'music-production',
+        name: 'Digital Music Production',
+        description: 'Learn to create, record, and produce music using digital tools.',
+        difficulty: 'Intermediate',
+        reason: 'Musical interests and creative expression'
+      });
+    }
+
+    // Additional creative courses
+    if (hobbies.includes('Photography')) {
+      recs.push({
+        id: 'photography',
+        name: 'Photography & Visual Storytelling',
+        description: 'Master composition, lighting, and digital photo editing techniques.',
+        difficulty: 'Beginner',
+        reason: 'Photography hobby shows visual creativity'
+      });
+    }
+
+    // Health & Wellness courses
+    if (interests.includes('Healthcare & Medicine') || sportsGrade >= 70) {
+      recs.push({
+        id: 'health-wellness',
+        name: 'Health & Wellness Studies',
+        description: 'Learn about nutrition, fitness, and promoting healthy lifestyles.',
+        difficulty: 'Beginner',
+        reason: 'Interest in health and physical fitness'
+      });
+    }
+
+    // Learning preference based courses
+    if (learningPreferences.handsOn) {
       if (!recs.some(r => r.id === 'advanced-programming') && (interests.includes('Technology & Programming') || hobbies.includes('Coding'))) {
         recs.push({
           id: 'web-development',
@@ -252,14 +334,34 @@ const PathwayRecommendation = () => {
       }
     }
 
-    // Default recommendations for undecided students
-    if (recs.length === 0 || careerGoals === 'Undecided') {
+    if (learningPreferences.projects) {
       recs.push({
-        id: 'career-exploration',
-        name: 'Career Exploration Workshop',
-        description: 'Discover your passions and explore various career paths through interactive activities.',
+        id: 'project-based-learning',
+        name: 'Independent Project Workshop',
+        description: 'Work on long-term projects in your areas of interest with mentor guidance.',
+        difficulty: 'Intermediate',
+        reason: 'Project-based learning matches your preference'
+      });
+    }
+
+    if (learningPreferences.groupWork) {
+      recs.push({
+        id: 'collaborative-projects',
+        name: 'Team Collaboration & Leadership',
+        description: 'Develop teamwork skills through group projects and leadership activities.',
+        difficulty: 'Intermediate',
+        reason: 'Group work preference for collaborative learning'
+      });
+    }
+
+    // Default recommendations for students with fewer matches
+    if (recs.length === 0) {
+      recs.push({
+        id: 'study-skills',
+        name: 'Study Skills & Time Management',
+        description: 'Learn effective study techniques and time management strategies.',
         difficulty: 'Beginner',
-        reason: 'Perfect for exploring different interests and career options'
+        reason: 'Essential skills for academic success'
       });
     }
 
@@ -281,8 +383,6 @@ const PathwayRecommendation = () => {
         return assessmentData.interests.length > 0;
       case 3:
         return assessmentData.hobbies.length > 0;
-      case 4:
-        return assessmentData.careerGoals !== '' && assessmentData.learningPreference !== '';
       default:
         return false;
     }
@@ -432,57 +532,54 @@ const PathwayRecommendation = () => {
 
       case 4:
         return (
-          <div className="space-y-6">
-            <div className="text-center mb-6">
-              <h2 className="text-2xl font-bold mb-2">Goals & Learning Style</h2>
-              <p className="text-muted-foreground">
-                Help us understand your future goals and how you learn best
+          <div className="space-y-8">
+            <div className="text-center mb-8">
+              <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                <Target className="h-8 w-8 text-primary" />
+              </div>
+              <h2 className="text-2xl font-bold mb-2">How Do You Learn Best?</h2>
+              <p className="text-muted-foreground max-w-md mx-auto">
+                Tell us about your learning style. Select all that apply to you.
               </p>
             </div>
             
-            <Card>
-              <CardHeader>
-                <CardTitle>Career Goals</CardTitle>
-                <CardDescription>What field interests you for your future career?</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                  {careerGoalOptions.map((goal) => (
-                    <div
-                      key={goal}
-                      onClick={() => updateAssessmentData('careerGoals', goal)}
-                      className={`p-3 rounded-lg border-2 cursor-pointer transition-all text-center ${
-                        assessmentData.careerGoals === goal
-                          ? 'border-primary bg-primary/10'
-                          : 'border-border hover:border-primary/50'
-                      }`}
-                    >
-                      <div className="font-medium text-sm">{goal}</div>
+            <div className="space-y-6 max-w-3xl mx-auto">
+              {learningPreferenceQuestions.map((question) => (
+                <Card key={question.key} className="hover:shadow-md transition-shadow">
+                  <CardContent className="p-6">
+                    <div className="flex items-start space-x-4">
+                      <div className="flex-shrink-0 mt-1">
+                        <div 
+                          className={`w-5 h-5 rounded border-2 cursor-pointer transition-all ${
+                            assessmentData.learningPreferences[question.key as keyof AssessmentData['learningPreferences']]
+                              ? 'bg-primary border-primary' 
+                              : 'border-border hover:border-primary/50'
+                          }`}
+                          onClick={() => toggleLearningPreference(question.key as keyof AssessmentData['learningPreferences'])}
+                        >
+                          {assessmentData.learningPreferences[question.key as keyof AssessmentData['learningPreferences']] && (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <div className="w-2 h-2 bg-white rounded-full"></div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex-1">
+                        <Label 
+                          className="text-base font-medium cursor-pointer leading-6"
+                          onClick={() => toggleLearningPreference(question.key as keyof AssessmentData['learningPreferences'])}
+                        >
+                          {question.label}
+                        </Label>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          {question.description}
+                        </p>
+                      </div>
                     </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Learning Preference</CardTitle>
-                <CardDescription>How do you prefer to learn new things?</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <RadioGroup
-                  value={assessmentData.learningPreference}
-                  onValueChange={(value) => updateAssessmentData('learningPreference', value)}
-                >
-                  {learningPreferenceOptions.map((pref) => (
-                    <div key={pref.value} className="flex items-center space-x-2">
-                      <RadioGroupItem value={pref.value} id={pref.value} />
-                      <Label htmlFor={pref.value}>{pref.label}</Label>
-                    </div>
-                  ))}
-                </RadioGroup>
-              </CardContent>
-            </Card>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
         );
 
