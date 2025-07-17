@@ -1,13 +1,9 @@
-import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
-import { LogOut, User, BookOpen, Users, Megaphone, Brain } from 'lucide-react';
+import { BookOpen, Users, Megaphone, Brain } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
 const Navigation = () => {
-  const { user, logout } = useAuth();
   const location = useLocation();
-
-  if (!user) return null;
 
   const navItems = [
     { path: '/dashboard', label: 'Dashboard', icon: BookOpen },
@@ -43,23 +39,6 @@ const Navigation = () => {
                 </Link>
               ))}
             </nav>
-          </div>
-
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2">
-              <User className="h-4 w-4" />
-              <span className="text-sm font-medium">{user.name}</span>
-              <span className="text-xs text-muted-foreground capitalize">({user.role})</span>
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={logout}
-              className="flex items-center space-x-2"
-            >
-              <LogOut className="h-4 w-4" />
-              <span>Logout</span>
-            </Button>
           </div>
         </div>
       </div>
