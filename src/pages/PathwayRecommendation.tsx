@@ -383,6 +383,8 @@ const PathwayRecommendation = () => {
         return assessmentData.interests.length > 0;
       case 3:
         return assessmentData.hobbies.length > 0;
+      case 4:
+        return true; // Learning preferences are optional
       default:
         return false;
     }
