@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,17 +7,14 @@ import { Search, Plus, Calendar, User, AlertCircle, Info, CheckCircle } from 'lu
 import { mockAnnouncements } from '@/data/mockData';
 
 const Announcements = () => {
-  const { user } = useAuth();
-  const [searchTerm, setSearchTerm] = useState('');
+  const user = { role: 'student' }; // Default role
   const [selectedPriority, setSelectedPriority] = useState<string>('all');
 
   const priorities = ['all', 'high', 'medium', 'low'];
   
   const filteredAnnouncements = mockAnnouncements.filter(announcement => {
-    const matchesSearch = announcement.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         announcement.content.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesPriority = selectedPriority === 'all' || announcement.priority === selectedPriority;
-    return matchesSearch && matchesPriority;
+    return matchesPriority;
   });
 
   const getPriorityIcon = (priority: string) => {
@@ -76,29 +72,18 @@ const Announcements = () => {
         )}
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-4 mb-6">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search announcements..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {priorities.map(priority => (
-            <Button
-              key={priority}
-              variant={selectedPriority === priority ? "default" : "outline"}
-              size="sm"
-              onClick={() => setSelectedPriority(priority)}
-              className="capitalize"
-            >
-              {priority}
-            </Button>
-          ))}
-        </div>
+      <div className="flex flex-wrap gap-2 mb-6">
+        {priorities.map(priority => (
+          <Button
+            key={priority}
+            variant={selectedPriority === priority ? "default" : "outline"}
+            size="sm"
+            onClick={() => setSelectedPriority(priority)}
+            className="capitalize"
+          >
+            {priority}
+          </Button>
+        ))}
       </div>
 
       <div className="space-y-4">
@@ -154,7 +139,7 @@ const Announcements = () => {
           <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
           <h3 className="text-lg font-medium mb-2">No announcements found</h3>
           <p className="text-muted-foreground">
-            Try adjusting your search or filter criteria.
+            Try adjusting your filter criteria.
           </p>
         </div>
       )}

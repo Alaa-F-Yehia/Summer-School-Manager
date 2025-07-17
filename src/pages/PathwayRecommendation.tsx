@@ -8,10 +8,14 @@ import { ArrowLeft, Target, BookOpen } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 interface AssessmentData {
+  arabicGrade: string;
   mathGrade: string;
-  scienceGrade: string;
   englishGrade: string;
-  historyGrade: string;
+  chemistryGrade: string;
+  biologyGrade: string;
+  physicsGrade: string;
+  sportsGrade: string;
+  roboticsGrade: string;
   interests: string[];
   hobbies: string[];
   careerGoals: string;
@@ -30,10 +34,14 @@ const PathwayRecommendation = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [assessmentData, setAssessmentData] = useState<AssessmentData>({
+    arabicGrade: '',
     mathGrade: '',
-    scienceGrade: '',
     englishGrade: '',
-    historyGrade: '',
+    chemistryGrade: '',
+    biologyGrade: '',
+    physicsGrade: '',
+    sportsGrade: '',
+    roboticsGrade: '',
     interests: [],
     hobbies: [],
     careerGoals: '',
@@ -42,10 +50,14 @@ const PathwayRecommendation = () => {
   const [recommendations, setRecommendations] = useState<RecommendedClass[]>([]);
 
   const subjects = [
-    { key: 'mathGrade' as keyof AssessmentData, label: 'Mathematics', icon: '🔢' },
-    { key: 'scienceGrade' as keyof AssessmentData, label: 'Science', icon: '🔬' },
-    { key: 'englishGrade' as keyof AssessmentData, label: 'English', icon: '📚' },
-    { key: 'historyGrade' as keyof AssessmentData, label: 'History', icon: '🏛️' }
+    { key: 'arabicGrade' as keyof AssessmentData, label: 'Arabic' },
+    { key: 'mathGrade' as keyof AssessmentData, label: 'Mathematics' },
+    { key: 'englishGrade' as keyof AssessmentData, label: 'English' },
+    { key: 'chemistryGrade' as keyof AssessmentData, label: 'Chemistry' },
+    { key: 'biologyGrade' as keyof AssessmentData, label: 'Biology' },
+    { key: 'physicsGrade' as keyof AssessmentData, label: 'Physics' },
+    { key: 'sportsGrade' as keyof AssessmentData, label: 'Sports' },
+    { key: 'roboticsGrade' as keyof AssessmentData, label: 'Robotics' }
   ];
 
   const gradeOptions = [
@@ -103,7 +115,7 @@ const PathwayRecommendation = () => {
   // Rule-based recommendation engine
   const generateRecommendations = (): RecommendedClass[] => {
     const recs: RecommendedClass[] = [];
-    const { mathGrade, scienceGrade, englishGrade, historyGrade, interests, hobbies, careerGoals, learningPreference } = assessmentData;
+    const { arabicGrade, mathGrade, englishGrade, chemistryGrade, biologyGrade, physicsGrade, sportsGrade, roboticsGrade, interests, hobbies, careerGoals, learningPreference } = assessmentData;
 
     // Math-based courses
     if (['A', 'B'].includes(mathGrade)) {
@@ -128,13 +140,13 @@ const PathwayRecommendation = () => {
     }
 
     // Science-based courses
-    if (['A', 'B'].includes(scienceGrade)) {
+    if (['A', 'B'].includes(chemistryGrade) || ['A', 'B'].includes(biologyGrade) || ['A', 'B'].includes(physicsGrade)) {
       if (interests.includes('Science & Research') || careerGoals === 'Healthcare') {
         recs.push({
           id: 'advanced-biology',
           name: 'Advanced Biology & Research Methods',
           description: 'Explore cellular biology, genetics, and scientific research techniques.',
-          difficulty: scienceGrade === 'A' ? 'Advanced' : 'Intermediate',
+          difficulty: (['A'].includes(biologyGrade) || ['A'].includes(chemistryGrade)) ? 'Advanced' : 'Intermediate',
           reason: 'Strong science background with research/healthcare interests'
         });
       }
@@ -147,6 +159,17 @@ const PathwayRecommendation = () => {
           reason: 'Science aptitude combined with environmental interests'
         });
       }
+    }
+
+    // Robotics courses
+    if (['A', 'B'].includes(roboticsGrade) || (interests.includes('Technology & Programming') && ['A', 'B'].includes(mathGrade))) {
+      recs.push({
+        id: 'robotics-programming',
+        name: 'Robotics & Programming',
+        description: 'Learn to build and program robots using modern technologies.',
+        difficulty: roboticsGrade === 'A' ? 'Advanced' : 'Intermediate',
+        reason: 'Strong robotics background with technology interests'
+      });
     }
 
     // English/Communication-based courses
@@ -171,17 +194,26 @@ const PathwayRecommendation = () => {
       }
     }
 
-    // History/Social Studies courses
-    if (['A', 'B'].includes(historyGrade)) {
-      if (interests.includes('Social Sciences') || careerGoals === 'Law/Politics') {
-        recs.push({
-          id: 'political-science',
-          name: 'Introduction to Political Science',
-          description: 'Explore government systems, political theory, and civic engagement.',
-          difficulty: 'Intermediate',
-          reason: 'Strong history background with political interests'
-        });
-      }
+    // Sports courses
+    if (['A', 'B'].includes(sportsGrade) || interests.includes('Sports & Fitness')) {
+      recs.push({
+        id: 'sports-science',
+        name: 'Sports Science & Fitness',
+        description: 'Learn about exercise physiology, nutrition, and athletic performance.',
+        difficulty: 'Intermediate',
+        reason: 'Strong sports background with fitness interests'
+      });
+    }
+
+    // Arabic language courses
+    if (['A', 'B'].includes(arabicGrade) || interests.includes('Languages & Communication')) {
+      recs.push({
+        id: 'arabic-literature',
+        name: 'Advanced Arabic Literature',
+        description: 'Explore classical and modern Arabic literature and poetry.',
+        difficulty: arabicGrade === 'A' ? 'Advanced' : 'Intermediate',
+        reason: 'Strong Arabic language skills with literature interests'
+      });
     }
 
     // Arts-based courses
@@ -261,21 +293,17 @@ const PathwayRecommendation = () => {
         return (
           <div className="space-y-6">
             <div className="text-center mb-6">
-              <h2 className="text-2xl font-bold mb-2">📊 Your Academic Performance</h2>
+              <h2 className="text-2xl font-bold mb-2">Your Academic Performance</h2>
               <p className="text-muted-foreground">
-                Tell us about your grades in core subjects to help us understand your strengths
+                Tell us about your grades in different subjects to help us understand your strengths
               </p>
             </div>
-            
-            {subjects.map((subject) => (
-              <Card key={subject.key}>
-                <CardHeader>
-                  <CardTitle className="text-lg flex items-center">
-                    <span className="text-2xl mr-3">{subject.icon}</span>
-                    {subject.label}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {subjects.map((subject) => (
+                <Card key={subject.key} className="p-4">
+                  <div className="mb-3">
+                    <h3 className="font-medium">{subject.label}</h3>
+                  </div>
                   <RadioGroup
                     value={assessmentData[subject.key] as string}
                     onValueChange={(value) => updateAssessmentData(subject.key, value)}
@@ -283,13 +311,13 @@ const PathwayRecommendation = () => {
                     {gradeOptions.map((grade) => (
                       <div key={grade.value} className="flex items-center space-x-2">
                         <RadioGroupItem value={grade.value} id={`${subject.key}-${grade.value}`} />
-                        <Label htmlFor={`${subject.key}-${grade.value}`}>{grade.label}</Label>
+                        <Label htmlFor={`${subject.key}-${grade.value}`} className="text-sm">{grade.label}</Label>
                       </div>
                     ))}
                   </RadioGroup>
-                </CardContent>
-              </Card>
-            ))}
+                </Card>
+              ))}
+            </div>
           </div>
         );
 
@@ -297,7 +325,7 @@ const PathwayRecommendation = () => {
         return (
           <div className="space-y-6">
             <div className="text-center mb-6">
-              <h2 className="text-2xl font-bold mb-2">🎯 Your Interests</h2>
+              <h2 className="text-2xl font-bold mb-2">Your Interests</h2>
               <p className="text-muted-foreground">
                 Select the areas that interest you most (choose as many as you like)
               </p>
@@ -338,7 +366,7 @@ const PathwayRecommendation = () => {
         return (
           <div className="space-y-6">
             <div className="text-center mb-6">
-              <h2 className="text-2xl font-bold mb-2">🎨 Your Hobbies</h2>
+              <h2 className="text-2xl font-bold mb-2">Your Hobbies</h2>
               <p className="text-muted-foreground">
                 What do you enjoy doing in your free time?
               </p>
@@ -379,7 +407,7 @@ const PathwayRecommendation = () => {
         return (
           <div className="space-y-6">
             <div className="text-center mb-6">
-              <h2 className="text-2xl font-bold mb-2">🚀 Goals & Learning Style</h2>
+              <h2 className="text-2xl font-bold mb-2">Goals & Learning Style</h2>
               <p className="text-muted-foreground">
                 Help us understand your future goals and how you learn best
               </p>
@@ -435,7 +463,7 @@ const PathwayRecommendation = () => {
         return (
           <div className="space-y-6">
             <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold mb-2">🎉 Your Personalized Pathway</h2>
+              <h2 className="text-3xl font-bold mb-2">Your Personalized Pathway</h2>
               <p className="text-muted-foreground">
                 Based on your responses, here are our recommended courses for you
               </p>

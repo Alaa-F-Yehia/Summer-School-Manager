@@ -1,4 +1,3 @@
-import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { BookOpen, Users, Megaphone, Brain, Plus, TrendingUp, Calendar } from 'lucide-react';
@@ -6,9 +5,8 @@ import { Link } from 'react-router-dom';
 import { mockClasses, mockTeachers, mockAnnouncements } from '@/data/mockData';
 
 const Dashboard = () => {
-  const { user } = useAuth();
-
-  if (!user) return null;
+  // Default to student role - can be changed later
+  const user = { name: 'Student', role: 'student' };
 
   const statsCards = user.role === 'manager' ? [
     { title: 'Total Classes', value: mockClasses.length, icon: BookOpen, color: 'text-blue-600' },

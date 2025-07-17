@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,16 +7,9 @@ import { Search, Star, Plus, BookOpen, Award } from 'lucide-react';
 import { mockTeachers } from '@/data/mockData';
 
 const Teachers = () => {
-  const { user } = useAuth();
-  const [searchTerm, setSearchTerm] = useState('');
+  const user = { role: 'student' }; // Default role
 
-  const filteredTeachers = mockTeachers.filter(teacher => 
-    teacher.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    teacher.bio.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    teacher.specialties.some(specialty => 
-      specialty.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  );
+  const filteredTeachers = mockTeachers;
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
@@ -51,17 +43,6 @@ const Teachers = () => {
         )}
       </div>
 
-      <div className="mb-6">
-        <div className="relative">
-          <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search teachers..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredTeachers.map((teacher) => (
@@ -120,7 +101,7 @@ const Teachers = () => {
           <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
           <h3 className="text-lg font-medium mb-2">No teachers found</h3>
           <p className="text-muted-foreground">
-            Try adjusting your search terms.
+            No teachers available at the moment.
           </p>
         </div>
       )}
