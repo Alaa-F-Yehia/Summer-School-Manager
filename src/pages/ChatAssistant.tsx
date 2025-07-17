@@ -1,9 +1,12 @@
-import { useState } from 'react';
+
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, MessageSquare, Send, Brain, Lightbulb, BookOpen, Users } from 'lucide-react';
+import { ArrowLeft, MessageSquare, Send, Brain, Lightbulb, BookOpen, Users, AlertCircle } from 'lucide-react';
+import { ollamaService, OllamaMessage } from '@/services/ollama';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface ChatMessage {
   role: 'user' | 'assistant';
@@ -22,6 +25,7 @@ const ChatAssistant = () => {
   ]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [ollamaStatus, setOllamaStatus] = useState<'checking' | 'connected' | 'disconnected'>('checking');
 
   const suggestedQuestions = [
     "What are the most popular courses this summer?",
@@ -34,48 +38,17 @@ const ChatAssistant = () => {
     "How do I prepare for college applications?"
   ];
 
-  // Mock AI responses - in a real app, this would call the Claude API
-  const generateAIResponse = (userMessage: string): string => {
-    const lowerMessage = userMessage.toLowerCase();
-    
-    if (lowerMessage.includes('course') || lowerMessage.includes('class')) {
-      return "Our summer school offers a variety of courses including:\n\n📚 **Core Subjects**: Advanced Math, Science, English, History\n🔬 **STEM**: Programming, Engineering, Environmental Science\n🎨 **Creative**: Digital Art, Creative Writing, Music\n💼 **Career Prep**: Business Fundamentals, Public Speaking\n\nEach course is designed to be engaging and practical. Would you like specific information about any particular subject area?";
+  useEffect(() => {
+    checkOllamaConnection();
+  }, []);
+
+  const checkOllamaConnection = async () => {
+    try {
+      const isConnected = await ollamaService.testConnection();
+      setOllamaStatus(isConnected ? 'connected' : 'disconnected');
+    } catch (error) {
+      setOllamaStatus('disconnected');
     }
-    
-    if (lowerMessage.includes('study') || lowerMessage.includes('learn')) {
-      return "Here are some effective study strategies for summer courses:\n\n✅ **Time Management**: Create a schedule and stick to it\n✅ **Active Learning**: Take notes, ask questions, participate\n✅ **Practice Regularly**: Don't cram - spread learning over time\n✅ **Study Groups**: Collaborate with classmates\n✅ **Break Tasks**: Divide large assignments into smaller parts\n✅ **Take Breaks**: Use the Pomodoro technique (25 min work, 5 min break)\n\nWhat specific subject are you looking to improve in?";
-    }
-    
-    if (lowerMessage.includes('prerequisite') || lowerMessage.includes('requirement')) {
-      return "Prerequisites vary by course level:\n\n🟢 **Beginner Courses**: No prerequisites required\n🟡 **Intermediate Courses**: Completion of basic level or equivalent grade (C+ or higher)\n🔴 **Advanced Courses**: Strong performance in intermediate level (B+ or higher)\n\nSome specific requirements:\n• Advanced Programming: Basic Programming + Math B or higher\n• Engineering Math: Algebra II completion\n• Advanced Biology: Biology I + Chemistry recommended\n\nWhich course are you interested in? I can provide specific requirements.";
-    }
-    
-    if (lowerMessage.includes('popular') || lowerMessage.includes('trending')) {
-      return "This summer's most popular courses are:\n\n🥇 **Web Development Bootcamp** - 95% enrollment\n🥈 **Creative Writing Workshop** - 87% enrollment  \n🥉 **Environmental Science** - 82% enrollment\n\n**Rising Stars**:\n• Digital Art & Design\n• Public Speaking & Debate\n• Young Entrepreneurs Program\n\nThese courses fill up quickly, so early enrollment is recommended! Are you interested in any of these areas?";
-    }
-    
-    if (lowerMessage.includes('balance') || lowerMessage.includes('multiple')) {
-      return "Managing multiple courses effectively:\n\n⏰ **Time Blocking**: Assign specific hours to each subject\n📅 **Weekly Planning**: Review all upcoming assignments on Sundays\n🎯 **Prioritization**: Focus on deadlines and difficulty first\n📝 **Assignment Tracking**: Use a planner or digital tool\n🤝 **Communication**: Talk to teachers if you're overwhelmed\n\n**Recommended Load**:\n• 2-3 courses for most students\n• 1-2 if taking advanced/intensive courses\n• Consider your other summer commitments\n\nHow many courses are you considering?";
-    }
-    
-    if (lowerMessage.includes('career') || lowerMessage.includes('future')) {
-      return "Here are some career pathway connections:\n\n💻 **Technology**: Programming → Software Developer, Web Designer, IT Specialist\n🔬 **Science**: Biology/Chemistry → Healthcare, Research, Environmental Science\n📚 **Liberal Arts**: English/Writing → Journalism, Law, Education, Marketing\n🎨 **Creative**: Art/Design → Graphic Designer, UX/UI Designer, Animator\n💼 **Business**: Entrepreneurship → Business Owner, Manager, Consultant\n🏛️ **Social Studies**: History/Politics → Law, Government, Non-profit work\n\nMany careers combine multiple areas! What interests you most?";
-    }
-    
-    if (lowerMessage.includes('grade') || lowerMessage.includes('grading')) {
-      return "Our grading system is designed to be fair and encouraging:\n\n📊 **Grade Scale**:\n• A: 90-100% (Excellent)\n• B: 80-89% (Good)\n• C: 70-79% (Satisfactory)\n• D: 60-69% (Needs Improvement)\n• F: Below 60% (Unsatisfactory)\n\n📈 **Grade Composition** (typical):\n• Participation: 20%\n• Assignments/Projects: 40%\n• Quizzes/Tests: 30%\n• Final Project/Exam: 10%\n\n✨ **Improvement Opportunities**: Most teachers allow revisions and offer extra credit. We focus on learning, not just grades!";
-    }
-    
-    if (lowerMessage.includes('help') || lowerMessage.includes('struggling') || lowerMessage.includes('support')) {
-      return "We have extensive support resources available:\n\n👥 **Tutoring Services**: Free peer and teacher tutoring\n📚 **Study Hall**: Supervised study time with help available\n💻 **Online Resources**: Digital libraries, practice tests, video tutorials\n🤝 **Study Groups**: Organized group sessions for each subject\n📞 **Academic Counseling**: One-on-one guidance sessions\n♿ **Accessibility Services**: Accommodations for all learning needs\n\n**Getting Help**:\n1. Talk to your teacher first\n2. Visit the help center (Room 101)\n3. Schedule tutoring through the portal\n4. Join subject-specific study groups\n\nDon't hesitate to ask for help early - we're here to support your success!";
-    }
-    
-    if (lowerMessage.includes('college') || lowerMessage.includes('application')) {
-      return "Summer school can strengthen your college applications:\n\n🎯 **How It Helps**:\n• Shows academic initiative and dedication\n• Demonstrates ability to handle challenging coursework\n• Provides additional GPA opportunities\n• Offers unique experiences for essays\n• Builds relationships with teachers (recommendation letters)\n\n📝 **Application Tips**:\n• Highlight leadership roles in courses\n• Mention specific projects or achievements\n• Connect summer learning to your intended major\n• Discuss skills developed (time management, independence)\n\n🏆 **Advanced Courses**: Taking advanced summer courses shows college readiness\n\nAre you focusing on any particular colleges or majors?";
-    }
-    
-    // Default response
-    return "That's a great question! While I can provide general guidance on academic topics, course information, and study strategies, I'd recommend reaching out to your specific instructors or the academic office for detailed or course-specific questions.\n\nIs there anything else about summer school programs, study techniques, or academic planning I can help you with?";
   };
 
   const handleSendMessage = async () => {
@@ -91,17 +64,49 @@ const ChatAssistant = () => {
     setInputMessage('');
     setIsLoading(true);
 
-    // Simulate API delay
-    setTimeout(() => {
+    try {
+      if (ollamaStatus !== 'connected') {
+        throw new Error('Ollama is not connected');
+      }
+
+      // Convert chat messages to Ollama format
+      const ollamaMessages: OllamaMessage[] = [
+        {
+          role: 'system',
+          content: 'You are a helpful AI assistant for a Summer School program. You help students with course information, study tips, academic guidance, and general questions about education. Be friendly, informative, and encouraging. Keep responses concise but helpful.'
+        },
+        ...messages.map(msg => ({
+          role: msg.role,
+          content: msg.content
+        })),
+        {
+          role: 'user',
+          content: inputMessage
+        }
+      ];
+
+      const aiResponseContent = await ollamaService.generateResponse(ollamaMessages);
+      
       const aiResponse: ChatMessage = {
         role: 'assistant',
-        content: generateAIResponse(inputMessage),
+        content: aiResponseContent,
         timestamp: new Date()
       };
       
       setMessages(prev => [...prev, aiResponse]);
+    } catch (error) {
+      console.error('Error generating AI response:', error);
+      
+      const errorResponse: ChatMessage = {
+        role: 'assistant',
+        content: 'I apologize, but I\'m having trouble connecting to the AI service right now. Please make sure Ollama is running on your machine and try again. You can also try refreshing the page.',
+        timestamp: new Date()
+      };
+      
+      setMessages(prev => [...prev, errorResponse]);
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   const handleSuggestedQuestion = (question: string) => {
@@ -131,6 +136,25 @@ const ChatAssistant = () => {
         <p className="text-muted-foreground">
           Get instant help with courses, study tips, and academic guidance
         </p>
+
+        {/* Ollama Status Alert */}
+        {ollamaStatus === 'disconnected' && (
+          <Alert className="mt-4" variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              Unable to connect to Ollama. Please make sure Ollama is running on your machine and the llama3:instruct model is available.
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {ollamaStatus === 'connected' && (
+          <Alert className="mt-4">
+            <Brain className="h-4 w-4" />
+            <AlertDescription>
+              Connected to Ollama Llama3 - AI responses are powered by your local model!
+            </AlertDescription>
+          </Alert>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -140,7 +164,7 @@ const ChatAssistant = () => {
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center text-lg">
                 <Brain className="h-5 w-5 mr-2" />
-                AI Assistant
+                AI Assistant {ollamaStatus === 'connected' && <span className="text-sm text-green-600 ml-2">(Ollama Connected)</span>}
               </CardTitle>
               <CardDescription>
                 Ask me anything about courses, studying, or academic planning
@@ -176,7 +200,7 @@ const ChatAssistant = () => {
                           <div className="h-2 w-2 bg-primary rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
                           <div className="h-2 w-2 bg-primary rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
                         </div>
-                        <span className="text-sm text-muted-foreground">AI is typing...</span>
+                        <span className="text-sm text-muted-foreground">Llama3 is thinking...</span>
                       </div>
                     </div>
                   </div>
@@ -191,10 +215,11 @@ const ChatAssistant = () => {
                   onChange={(e) => setInputMessage(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                   className="flex-1"
+                  disabled={ollamaStatus !== 'connected'}
                 />
                 <Button 
                   onClick={handleSendMessage} 
-                  disabled={!inputMessage.trim() || isLoading}
+                  disabled={!inputMessage.trim() || isLoading || ollamaStatus !== 'connected'}
                 >
                   <Send className="h-4 w-4" />
                 </Button>
@@ -223,6 +248,7 @@ const ChatAssistant = () => {
                     variant="ghost"
                     className="w-full text-left justify-start h-auto p-3 text-sm"
                     onClick={() => handleSuggestedQuestion(question)}
+                    disabled={ollamaStatus !== 'connected'}
                   >
                     {question}
                   </Button>
@@ -266,6 +292,21 @@ const ChatAssistant = () => {
               </Button>
             </CardContent>
           </Card>
+
+          {/* Retry Connection Button */}
+          {ollamaStatus === 'disconnected' && (
+            <Card className="mt-4">
+              <CardContent className="pt-6">
+                <Button
+                  onClick={checkOllamaConnection}
+                  className="w-full"
+                  variant="outline"
+                >
+                  Retry Connection
+                </Button>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
     </div>
