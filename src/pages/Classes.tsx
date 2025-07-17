@@ -9,14 +9,6 @@ import { Class } from '@/types';
 
 const Classes = () => {
   const user = { role: 'student' }; // Default role
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
-
-  const categories = ['all', ...new Set(mockClasses.map(c => c.category))];
-  
-  const filteredClasses = mockClasses.filter(cls => {
-    const matchesCategory = selectedCategory === 'all' || cls.category === selectedCategory;
-    return matchesCategory;
-  });
 
   const getLevelColor = (level: string) => {
     switch (level) {
@@ -38,37 +30,23 @@ const Classes = () => {
     <div className="container mx-auto px-4 py-6">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-3xl font-bold mb-2">Classes</h1>
+          <h1 className="text-3xl font-bold mb-2">Summer Camp Activities</h1>
           <p className="text-muted-foreground">
             {user?.role === 'manager' 
-              ? 'Manage your summer school classes' 
-              : 'Browse and enroll in available classes'}
+              ? 'Manage your summer camp activities' 
+              : 'Browse and enroll in exciting camp activities'}
           </p>
         </div>
         {user?.role === 'manager' && (
           <Button>
             <Plus className="h-4 w-4 mr-2" />
-            Add Class
+            Add Activity
           </Button>
         )}
       </div>
 
-      <div className="flex flex-wrap gap-2 mb-6">
-        {categories.map(category => (
-          <Button
-            key={category}
-            variant={selectedCategory === category ? "default" : "outline"}
-            size="sm"
-            onClick={() => setSelectedCategory(category)}
-            className="capitalize"
-          >
-            {category}
-          </Button>
-        ))}
-      </div>
-
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredClasses.map((cls) => {
+        {mockClasses.map((cls) => {
           const status = getEnrollmentStatus(cls);
           return (
             <Card key={cls.id} className="hover:shadow-md transition-shadow">
@@ -95,7 +73,7 @@ const Classes = () => {
                   </div>
                   <div className="flex items-center text-sm text-muted-foreground">
                     <Users className="h-4 w-4 mr-2" />
-                    {cls.enrolled}/{cls.capacity} students
+                    {cls.enrolled}/{cls.capacity} campers
                   </div>
                   <div className="flex items-center text-sm">
                     <BookOpen className="h-4 w-4 mr-2" />
@@ -106,7 +84,7 @@ const Classes = () => {
                 <div className="flex gap-2">
                   {user?.role === 'student' ? (
                     <Button className="flex-1" disabled={cls.enrolled >= cls.capacity}>
-                      {cls.enrolled >= cls.capacity ? 'Full' : 'Enroll'}
+                      {cls.enrolled >= cls.capacity ? 'Full' : 'Join Activity'}
                     </Button>
                   ) : (
                     <>
@@ -125,12 +103,12 @@ const Classes = () => {
         })}
       </div>
 
-      {filteredClasses.length === 0 && (
+      {mockClasses.length === 0 && (
         <div className="text-center py-12">
           <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-          <h3 className="text-lg font-medium mb-2">No classes found</h3>
+          <h3 className="text-lg font-medium mb-2">No activities found</h3>
           <p className="text-muted-foreground">
-            Try adjusting your category filter.
+            Check back later for more exciting camp activities!
           </p>
         </div>
       )}
