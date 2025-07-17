@@ -4,18 +4,19 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, Target, BookOpen } from 'lucide-react';
+import { Slider } from '@/components/ui/slider';
+import { ArrowLeft, Target, BookOpen, GraduationCap } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 interface AssessmentData {
-  arabicGrade: string;
-  mathGrade: string;
-  englishGrade: string;
-  chemistryGrade: string;
-  biologyGrade: string;
-  physicsGrade: string;
-  sportsGrade: string;
-  roboticsGrade: string;
+  arabicGrade: number;
+  mathGrade: number;
+  englishGrade: number;
+  chemistryGrade: number;
+  biologyGrade: number;
+  physicsGrade: number;
+  sportsGrade: number;
+  roboticsGrade: number;
   interests: string[];
   hobbies: string[];
   careerGoals: string;
@@ -34,14 +35,14 @@ const PathwayRecommendation = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [assessmentData, setAssessmentData] = useState<AssessmentData>({
-    arabicGrade: '',
-    mathGrade: '',
-    englishGrade: '',
-    chemistryGrade: '',
-    biologyGrade: '',
-    physicsGrade: '',
-    sportsGrade: '',
-    roboticsGrade: '',
+    arabicGrade: 50,
+    mathGrade: 50,
+    englishGrade: 50,
+    chemistryGrade: 50,
+    biologyGrade: 50,
+    physicsGrade: 50,
+    sportsGrade: 50,
+    roboticsGrade: 50,
     interests: [],
     hobbies: [],
     careerGoals: '',
@@ -50,23 +51,23 @@ const PathwayRecommendation = () => {
   const [recommendations, setRecommendations] = useState<RecommendedClass[]>([]);
 
   const subjects = [
-    { key: 'arabicGrade' as keyof AssessmentData, label: 'Arabic' },
-    { key: 'mathGrade' as keyof AssessmentData, label: 'Mathematics' },
-    { key: 'englishGrade' as keyof AssessmentData, label: 'English' },
-    { key: 'chemistryGrade' as keyof AssessmentData, label: 'Chemistry' },
-    { key: 'biologyGrade' as keyof AssessmentData, label: 'Biology' },
-    { key: 'physicsGrade' as keyof AssessmentData, label: 'Physics' },
-    { key: 'sportsGrade' as keyof AssessmentData, label: 'Sports' },
-    { key: 'roboticsGrade' as keyof AssessmentData, label: 'Robotics' }
+    { key: 'arabicGrade' as keyof AssessmentData, label: 'Arabic Language', color: 'bg-blue-50 border-blue-200' },
+    { key: 'mathGrade' as keyof AssessmentData, label: 'Mathematics', color: 'bg-green-50 border-green-200' },
+    { key: 'englishGrade' as keyof AssessmentData, label: 'English Language', color: 'bg-purple-50 border-purple-200' },
+    { key: 'chemistryGrade' as keyof AssessmentData, label: 'Chemistry', color: 'bg-orange-50 border-orange-200' },
+    { key: 'biologyGrade' as keyof AssessmentData, label: 'Biology', color: 'bg-emerald-50 border-emerald-200' },
+    { key: 'physicsGrade' as keyof AssessmentData, label: 'Physics', color: 'bg-red-50 border-red-200' },
+    { key: 'sportsGrade' as keyof AssessmentData, label: 'Physical Education', color: 'bg-yellow-50 border-yellow-200' },
+    { key: 'roboticsGrade' as keyof AssessmentData, label: 'Robotics & Technology', color: 'bg-indigo-50 border-indigo-200' }
   ];
 
-  const gradeOptions = [
-    { value: 'A', label: 'A (90-100%)' },
-    { value: 'B', label: 'B (80-89%)' },
-    { value: 'C', label: 'C (70-79%)' },
-    { value: 'D', label: 'D (60-69%)' },
-    { value: 'F', label: 'F (Below 60%)' }
-  ];
+  const getGradeLabel = (score: number) => {
+    if (score >= 90) return 'A (Excellent)';
+    if (score >= 80) return 'B (Good)';
+    if (score >= 70) return 'C (Average)';
+    if (score >= 60) return 'D (Below Average)';
+    return 'F (Needs Improvement)';
+  };
 
   const interestOptions = [
     'Technology & Programming', 'Arts & Design', 'Science & Research',
@@ -118,13 +119,13 @@ const PathwayRecommendation = () => {
     const { arabicGrade, mathGrade, englishGrade, chemistryGrade, biologyGrade, physicsGrade, sportsGrade, roboticsGrade, interests, hobbies, careerGoals, learningPreference } = assessmentData;
 
     // Math-based courses
-    if (['A', 'B'].includes(mathGrade)) {
+    if (mathGrade >= 70) {
       if (interests.includes('Technology & Programming') || hobbies.includes('Coding')) {
         recs.push({
           id: 'advanced-programming',
           name: 'Advanced Programming & Algorithms',
           description: 'Dive deep into programming concepts, data structures, and algorithm design.',
-          difficulty: mathGrade === 'A' ? 'Advanced' : 'Intermediate',
+          difficulty: mathGrade >= 85 ? 'Advanced' : 'Intermediate',
           reason: 'Strong math skills and programming interest detected'
         });
       }
@@ -140,13 +141,13 @@ const PathwayRecommendation = () => {
     }
 
     // Science-based courses
-    if (['A', 'B'].includes(chemistryGrade) || ['A', 'B'].includes(biologyGrade) || ['A', 'B'].includes(physicsGrade)) {
+    if (chemistryGrade >= 70 || biologyGrade >= 70 || physicsGrade >= 70) {
       if (interests.includes('Science & Research') || careerGoals === 'Healthcare') {
         recs.push({
           id: 'advanced-biology',
           name: 'Advanced Biology & Research Methods',
           description: 'Explore cellular biology, genetics, and scientific research techniques.',
-          difficulty: (['A'].includes(biologyGrade) || ['A'].includes(chemistryGrade)) ? 'Advanced' : 'Intermediate',
+          difficulty: (biologyGrade >= 85 || chemistryGrade >= 85) ? 'Advanced' : 'Intermediate',
           reason: 'Strong science background with research/healthcare interests'
         });
       }
@@ -162,18 +163,18 @@ const PathwayRecommendation = () => {
     }
 
     // Robotics courses
-    if (['A', 'B'].includes(roboticsGrade) || (interests.includes('Technology & Programming') && ['A', 'B'].includes(mathGrade))) {
+    if (roboticsGrade >= 70 || (interests.includes('Technology & Programming') && mathGrade >= 70)) {
       recs.push({
         id: 'robotics-programming',
         name: 'Robotics & Programming',
         description: 'Learn to build and program robots using modern technologies.',
-        difficulty: roboticsGrade === 'A' ? 'Advanced' : 'Intermediate',
+        difficulty: roboticsGrade >= 85 ? 'Advanced' : 'Intermediate',
         reason: 'Strong robotics background with technology interests'
       });
     }
 
     // English/Communication-based courses
-    if (['A', 'B'].includes(englishGrade)) {
+    if (englishGrade >= 70) {
       if (interests.includes('Writing & Literature') || hobbies.includes('Writing')) {
         recs.push({
           id: 'creative-writing',
@@ -195,7 +196,7 @@ const PathwayRecommendation = () => {
     }
 
     // Sports courses
-    if (['A', 'B'].includes(sportsGrade) || interests.includes('Sports & Fitness')) {
+    if (sportsGrade >= 70 || interests.includes('Sports & Fitness')) {
       recs.push({
         id: 'sports-science',
         name: 'Sports Science & Fitness',
@@ -206,12 +207,12 @@ const PathwayRecommendation = () => {
     }
 
     // Arabic language courses
-    if (['A', 'B'].includes(arabicGrade) || interests.includes('Languages & Communication')) {
+    if (arabicGrade >= 70 || interests.includes('Languages & Communication')) {
       recs.push({
         id: 'arabic-literature',
         name: 'Advanced Arabic Literature',
         description: 'Explore classical and modern Arabic literature and poetry.',
-        difficulty: arabicGrade === 'A' ? 'Advanced' : 'Intermediate',
+        difficulty: arabicGrade >= 85 ? 'Advanced' : 'Intermediate',
         reason: 'Strong Arabic language skills with literature interests'
       });
     }
@@ -275,7 +276,7 @@ const PathwayRecommendation = () => {
   const canProceedToNext = () => {
     switch (currentStep) {
       case 1:
-        return subjects.every(subject => assessmentData[subject.key] !== '');
+        return true; // No longer require all subjects to be filled
       case 2:
         return assessmentData.interests.length > 0;
       case 3:
@@ -291,30 +292,46 @@ const PathwayRecommendation = () => {
     switch (currentStep) {
       case 1:
         return (
-          <div className="space-y-6">
-            <div className="text-center mb-6">
-              <h2 className="text-2xl font-bold mb-2">Your Academic Performance</h2>
-              <p className="text-muted-foreground">
-                Tell us about your grades in different subjects to help us understand your strengths
+          <div className="space-y-8">
+            <div className="text-center mb-8">
+              <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                <GraduationCap className="h-8 w-8 text-primary" />
+              </div>
+              <h2 className="text-2xl font-bold mb-2">Academic Performance</h2>
+              <p className="text-muted-foreground max-w-md mx-auto">
+                Rate your performance in each subject using the sliders below. You can skip subjects you haven't studied.
               </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
               {subjects.map((subject) => (
-                <Card key={subject.key} className="p-4">
-                  <div className="mb-3">
-                    <h3 className="font-medium">{subject.label}</h3>
-                  </div>
-                  <RadioGroup
-                    value={assessmentData[subject.key] as string}
-                    onValueChange={(value) => updateAssessmentData(subject.key, value)}
-                  >
-                    {gradeOptions.map((grade) => (
-                      <div key={grade.value} className="flex items-center space-x-2">
-                        <RadioGroupItem value={grade.value} id={`${subject.key}-${grade.value}`} />
-                        <Label htmlFor={`${subject.key}-${grade.value}`} className="text-sm">{grade.label}</Label>
+                <Card key={subject.key} className={`${subject.color} border-2 hover:shadow-md transition-shadow`}>
+                  <CardHeader className="pb-4">
+                    <CardTitle className="text-lg">{subject.label}</CardTitle>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-muted-foreground">Score: {assessmentData[subject.key] as number}%</span>
+                      <Badge variant="secondary" className="text-xs">
+                        {getGradeLabel(assessmentData[subject.key] as number)}
+                      </Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className="space-y-3">
+                      <Slider
+                        value={[assessmentData[subject.key] as number]}
+                        onValueChange={(value) => updateAssessmentData(subject.key, value[0])}
+                        max={100}
+                        min={0}
+                        step={5}
+                        className="w-full"
+                      />
+                      <div className="flex justify-between text-xs text-muted-foreground">
+                        <span>0%</span>
+                        <span>50%</span>
+                        <span>100%</span>
                       </div>
-                    ))}
-                  </RadioGroup>
+                    </div>
+                  </CardContent>
                 </Card>
               ))}
             </div>
@@ -323,83 +340,93 @@ const PathwayRecommendation = () => {
 
       case 2:
         return (
-          <div className="space-y-6">
-            <div className="text-center mb-6">
-              <h2 className="text-2xl font-bold mb-2">Your Interests</h2>
-              <p className="text-muted-foreground">
-                Select the areas that interest you most (choose as many as you like)
+          <div className="space-y-8">
+            <div className="text-center mb-8">
+              <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                <Target className="h-8 w-8 text-primary" />
+              </div>
+              <h2 className="text-2xl font-bold mb-2">Areas of Interest</h2>
+              <p className="text-muted-foreground max-w-md mx-auto">
+                Select the fields that genuinely interest you. Choose as many as apply to help us understand your preferences.
               </p>
             </div>
             
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
               {interestOptions.map((interest) => (
                 <div
                   key={interest}
                   onClick={() => toggleArrayItem('interests', interest)}
-                  className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                  className={`p-4 rounded-lg border-2 cursor-pointer transition-all hover:scale-105 ${
                     assessmentData.interests.includes(interest)
-                      ? 'border-primary bg-primary/10'
-                      : 'border-border hover:border-primary/50'
+                      ? 'border-primary bg-primary/10 shadow-md'
+                      : 'border-border hover:border-primary/50 hover:shadow-sm'
                   }`}
                 >
-                  <div className="text-center font-medium">{interest}</div>
+                  <div className="text-center font-medium text-sm">{interest}</div>
                 </div>
               ))}
             </div>
             
-            <div className="mt-4">
-              <p className="text-sm text-muted-foreground mb-2">
-                Selected: {assessmentData.interests.length} interest(s)
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {assessmentData.interests.map((interest) => (
-                  <Badge key={interest} variant="secondary">
-                    {interest}
-                  </Badge>
-                ))}
+            {assessmentData.interests.length > 0 && (
+              <div className="mt-6 p-4 bg-muted/50 rounded-lg max-w-2xl mx-auto">
+                <p className="text-sm text-muted-foreground mb-2 text-center">
+                  Selected interests ({assessmentData.interests.length})
+                </p>
+                <div className="flex flex-wrap gap-2 justify-center">
+                  {assessmentData.interests.map((interest) => (
+                    <Badge key={interest} variant="secondary" className="text-xs">
+                      {interest}
+                    </Badge>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         );
 
       case 3:
         return (
-          <div className="space-y-6">
-            <div className="text-center mb-6">
-              <h2 className="text-2xl font-bold mb-2">Your Hobbies</h2>
-              <p className="text-muted-foreground">
-                What do you enjoy doing in your free time?
+          <div className="space-y-8">
+            <div className="text-center mb-8">
+              <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                <BookOpen className="h-8 w-8 text-primary" />
+              </div>
+              <h2 className="text-2xl font-bold mb-2">Personal Hobbies</h2>
+              <p className="text-muted-foreground max-w-md mx-auto">
+                Tell us about your favorite activities and hobbies. This helps us understand your personal interests.
               </p>
             </div>
             
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
               {hobbyOptions.map((hobby) => (
                 <div
                   key={hobby}
                   onClick={() => toggleArrayItem('hobbies', hobby)}
-                  className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                  className={`p-4 rounded-lg border-2 cursor-pointer transition-all hover:scale-105 ${
                     assessmentData.hobbies.includes(hobby)
-                      ? 'border-primary bg-primary/10'
-                      : 'border-border hover:border-primary/50'
+                      ? 'border-primary bg-primary/10 shadow-md'
+                      : 'border-border hover:border-primary/50 hover:shadow-sm'
                   }`}
                 >
-                  <div className="text-center font-medium">{hobby}</div>
+                  <div className="text-center font-medium text-sm">{hobby}</div>
                 </div>
               ))}
             </div>
             
-            <div className="mt-4">
-              <p className="text-sm text-muted-foreground mb-2">
-                Selected: {assessmentData.hobbies.length} hobby/hobbies
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {assessmentData.hobbies.map((hobby) => (
-                  <Badge key={hobby} variant="secondary">
-                    {hobby}
-                  </Badge>
-                ))}
+            {assessmentData.hobbies.length > 0 && (
+              <div className="mt-6 p-4 bg-muted/50 rounded-lg max-w-2xl mx-auto">
+                <p className="text-sm text-muted-foreground mb-2 text-center">
+                  Selected hobbies ({assessmentData.hobbies.length})
+                </p>
+                <div className="flex flex-wrap gap-2 justify-center">
+                  {assessmentData.hobbies.map((hobby) => (
+                    <Badge key={hobby} variant="secondary" className="text-xs">
+                      {hobby}
+                    </Badge>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         );
 
@@ -538,40 +565,46 @@ const PathwayRecommendation = () => {
         </div>
         
         {currentStep < 5 && (
-          <div className="w-full bg-muted rounded-full h-2 mb-6">
-            <div 
-              className="bg-primary h-2 rounded-full transition-all duration-300"
-              style={{ width: `${(currentStep / 4) * 100}%` }}
-            />
-          </div>
+        <div className="w-full bg-muted rounded-full h-3 mb-6">
+          <div 
+            className="bg-gradient-to-r from-primary to-primary/80 h-3 rounded-full transition-all duration-500 ease-out"
+            style={{ width: `${(currentStep / 4) * 100}%` }}
+          />
+        </div>
         )}
       </div>
 
       {renderStep()}
 
       {currentStep < 5 && (
-        <div className="flex justify-between mt-8">
+        <div className="flex justify-between items-center mt-12 pt-6 border-t">
           <Button
             variant="outline"
+            size="lg"
             onClick={() => setCurrentStep(prev => Math.max(1, prev - 1))}
             disabled={currentStep === 1}
+            className="px-8"
           >
-            Previous
+            Previous Step
           </Button>
           
           {currentStep === 4 ? (
             <Button
+              size="lg"
               onClick={handleSubmit}
               disabled={!canProceedToNext()}
+              className="px-8 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
             >
-              Get Recommendations
+              Generate Recommendations
             </Button>
           ) : (
             <Button
+              size="lg"
               onClick={() => setCurrentStep(prev => prev + 1)}
               disabled={!canProceedToNext()}
+              className="px-8"
             >
-              Next
+              Next Step
             </Button>
           )}
         </div>
