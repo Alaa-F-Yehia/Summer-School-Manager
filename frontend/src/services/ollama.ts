@@ -18,7 +18,7 @@ export class OllamaService {
   private baseUrl: string;
   private model: string;
 
-  constructor(baseUrl = 'http://localhost:11434', model = 'llama3:instruct') {
+  constructor(baseUrl = 'http://localhost:11434', model = 'tinyllama:1.1b') {
     this.baseUrl = baseUrl;
     this.model = model;
   }

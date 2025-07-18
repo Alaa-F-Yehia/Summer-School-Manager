@@ -26,17 +26,21 @@ const ChatAssistant = () => {
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [ollamaStatus, setOllamaStatus] = useState<'checking' | 'connected' | 'disconnected'>('checking');
+  const [classes, setClasses] = useState([]);
 
   const suggestedQuestions = [
-    "What are the most popular courses this summer?",
-    "How can I improve my study habits?",
-    "What prerequisites do I need for advanced courses?",
-    "How do I balance multiple courses effectively?",
-    "What career paths align with STEM courses?",
-    "Can you explain the grading system?",
-    "What resources are available for struggling students?",
-    "How do I prepare for college applications?"
+    "What classes do you recommend for beginners?",
+    "How do I enroll in a class?",
+    "Who are the teachers for the advanced courses?",
+    "What is the schedule for summer classes?",
+    "Can you help me choose a class based on my interests?"
   ];
+
+  useEffect(() => {
+    fetch('http://localhost:4000/api/classes')
+      .then(res => res.json())
+      .then(data => setClasses(data));
+  }, []);
 
   useEffect(() => {
     checkOllamaConnection();
@@ -69,6 +73,36 @@ const ChatAssistant = () => {
         throw new Error('Ollama is not connected');
       }
 
+<<<<<<< HEAD:src/pages/ChatAssistant.tsx
+=======
+     // Dynamically generate the system prompt with only the top 5 classes from the database
+const topClasses = classes.slice(0, 5);
+const classList = topClasses.map(
+  (cls, idx) => `${idx + 1}. ${cls.name}: ${cls.description} Teacher: ${cls.teacher}. Level: ${cls.level}.`
+).join('\n');
+
+// Much more explicit prompt for TinyLlama
+const systemPrompt = `You are an AI assistant for a summer school program. 
+
+IMPORTANT: You can ONLY recommend from these specific classes. Do NOT suggest any other classes or activities.
+
+Available classes:
+${classList}
+
+RULES:
+1. When asked for recommendations, ONLY suggest from the classes listed above
+2. Do NOT mention any other classes, activities, or courses
+3. If none of the listed classes match the user's needs, say "I don't have a class that matches your needs in our current offerings"
+4. Always refer to the exact class names from the list above
+
+When a user asks for recommendations, suggest from these classes only. Ask questions to help them find the best fit.`;
+
+// Debug: Log what we're sending to see if classes are loaded
+console.log('Classes being sent to AI:', topClasses);
+console.log('System prompt:', systemPrompt);
+
+
+>>>>>>> 836d2ec (Replace old project with new files):frontend/src/pages/ChatAssistant.tsx
       // Convert chat messages to Ollama format
       const ollamaMessages: OllamaMessage[] = [
         {
@@ -87,9 +121,46 @@ const ChatAssistant = () => {
 
       const aiResponseContent = await ollamaService.generateResponse(ollamaMessages);
       
+      // Check if the AI response contains any of our actual class names
+      const containsRealClasses = topClasses.some(cls => 
+        aiResponseContent.toLowerCase().includes(cls.name.toLowerCase())
+      );
+      
+      let finalResponse = aiResponseContent;
+      
+      // If AI didn't mention real classes, use rule-based fallback
+      if (!containsRealClasses && topClasses.length > 0) {
+        console.log('AI response did not contain real classes, using fallback');
+        
+        const userInput = inputMessage.toLowerCase();
+        let recommendedClasses = [];
+        
+        // Simple keyword matching
+        if (userInput.includes('beginner') || userInput.includes('start') || userInput.includes('new')) {
+          recommendedClasses = topClasses.filter(cls => cls.level.toLowerCase().includes('beginner'));
+        } else if (userInput.includes('advanced') || userInput.includes('expert')) {
+          recommendedClasses = topClasses.filter(cls => cls.level.toLowerCase().includes('advanced'));
+        } else if (userInput.includes('intermediate')) {
+          recommendedClasses = topClasses.filter(cls => cls.level.toLowerCase().includes('intermediate'));
+        } else {
+          // Default: recommend first 2 classes
+          recommendedClasses = topClasses.slice(0, 2);
+        }
+        
+        if (recommendedClasses.length > 0) {
+          const classNames = recommendedClasses.map(cls => cls.name).join(', ');
+          finalResponse = `Based on your request, I recommend these classes from our current offerings:\n\n${recommendedClasses.map(cls => 
+            `• ${cls.name}: ${cls.description} (Level: ${cls.level}, Teacher: ${cls.teacher})`
+          ).join('\n')}\n\nThese are the actual classes available in our summer program. Would you like to know more about any of them?`;
+        } else {
+          finalResponse = "I don't have any classes that match your current needs in our offerings. Here are all our available classes:\n\n" + 
+            topClasses.map(cls => `• ${cls.name}: ${cls.description} (Level: ${cls.level})`).join('\n');
+        }
+      }
+      
       const aiResponse: ChatMessage = {
         role: 'assistant',
-        content: aiResponseContent,
+        content: finalResponse,
         timestamp: new Date()
       };
       
@@ -200,7 +271,7 @@ const ChatAssistant = () => {
                           <div className="h-2 w-2 bg-primary rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
                           <div className="h-2 w-2 bg-primary rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
                         </div>
-                        <span className="text-sm text-muted-foreground">Llama3 is thinking...</span>
+                        <span className="text-sm text-muted-foreground">TinyLlama is thinking...</span>
                       </div>
                     </div>
                   </div>

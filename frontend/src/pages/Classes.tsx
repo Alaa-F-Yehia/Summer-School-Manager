@@ -1,14 +1,22 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Search, Users, Clock, Plus, BookOpen } from 'lucide-react';
-import { mockClasses } from '@/data/mockData';
+// Removed mockClasses import
 import { Class } from '@/types';
 
 const Classes = () => {
   const user = { role: 'student' }; // Default role
+  // Replace mockClasses with empty array or API data in the future
+  const [classes, setClasses] = useState<Class[]>([]);
+
+  useEffect(() => {
+    fetch('http://localhost:4000/api/classes')
+      .then(res => res.json())
+      .then(data => setClasses(data));
+  }, []);
 
   const getLevelColor = (level: string) => {
     switch (level) {
@@ -46,7 +54,7 @@ const Classes = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {mockClasses.map((cls) => {
+        {classes.map((cls) => {
           const status = getEnrollmentStatus(cls);
           return (
             <Card key={cls.id} className="hover:shadow-md transition-shadow">
@@ -103,7 +111,7 @@ const Classes = () => {
         })}
       </div>
 
-      {mockClasses.length === 0 && (
+      {classes.length === 0 && (
         <div className="text-center py-12">
           <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
           <h3 className="text-lg font-medium mb-2">No activities found</h3>

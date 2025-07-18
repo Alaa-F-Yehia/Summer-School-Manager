@@ -1,15 +1,22 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Search, Star, Plus, BookOpen, Award } from 'lucide-react';
-import { mockTeachers } from '@/data/mockData';
+// Removed mockTeachers import
 
 const Teachers = () => {
   const user = { role: 'student' }; // Default role
+  const [teachers, setTeachers] = useState([]);
 
-  const filteredTeachers = mockTeachers;
+  useEffect(() => {
+    fetch('http://localhost:4000/api/teachers')
+      .then(res => res.json())
+      .then(data => setTeachers(data));
+  }, []);
+
+  const filteredTeachers = teachers;
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (

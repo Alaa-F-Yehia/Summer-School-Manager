@@ -2,22 +2,23 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { BookOpen, Users, Megaphone, Brain, Plus, TrendingUp, Calendar } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { mockClasses, mockTeachers, mockAnnouncements } from '@/data/mockData';
+// Removed mock data imports
 
 const Dashboard = () => {
   // Default to student role - can be changed later
   const user = { name: 'Student', role: 'student' };
 
+  // Replace mock data with empty arrays or API data in the future
   const statsCards = user.role === 'manager' ? [
-    { title: 'Total Classes', value: mockClasses.length, icon: BookOpen, color: 'text-blue-600' },
-    { title: 'Total Teachers', value: mockTeachers.length, icon: Users, color: 'text-green-600' },
-    { title: 'Announcements', value: mockAnnouncements.length, icon: Megaphone, color: 'text-purple-600' },
+    { title: 'Total Classes', value: 0, icon: BookOpen, color: 'text-blue-600' },
+    { title: 'Total Teachers', value: 0, icon: Users, color: 'text-green-600' },
+    { title: 'Announcements', value: 0, icon: Megaphone, color: 'text-purple-600' },
     { title: 'Enrolled Students', value: 127, icon: TrendingUp, color: 'text-orange-600' },
   ] : [
     { title: 'My Classes', value: 2, icon: BookOpen, color: 'text-blue-600' },
-    { title: 'Available Classes', value: mockClasses.length - 2, icon: Calendar, color: 'text-green-600' },
+    { title: 'Available Classes', value: 0, icon: Calendar, color: 'text-green-600' },
     { title: 'My Teachers', value: 2, icon: Users, color: 'text-purple-600' },
-    { title: 'Announcements', value: mockAnnouncements.filter(a => a.priority === 'high').length, icon: Megaphone, color: 'text-orange-600' },
+    { title: 'Announcements', value: 0, icon: Megaphone, color: 'text-orange-600' },
   ];
 
   const quickActions = user.role === 'manager' ? [
@@ -102,7 +103,7 @@ const Dashboard = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {mockAnnouncements.slice(0, 3).map((announcement) => (
+                {[] /* mockAnnouncements */.slice(0, 3).map((announcement) => (
                   <div key={announcement.id} className="space-y-2">
                     <div className="flex items-center space-x-2">
                       <span className={`inline-block w-2 h-2 rounded-full ${

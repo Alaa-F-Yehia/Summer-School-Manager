@@ -1,22 +1,29 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Search, Plus, Calendar, User, AlertCircle, Info, CheckCircle } from 'lucide-react';
-import { mockAnnouncements } from '@/data/mockData';
+// Removed mockAnnouncements import
 
 const Announcements = () => {
   const user = { role: 'student' }; // Default role
   const [selectedPriority, setSelectedPriority] = useState<string>('all');
+  const [announcements, setAnnouncements] = useState([]);
 
-  const priorities = ['all', 'high', 'medium', 'low'];
-  
-  const filteredAnnouncements = mockAnnouncements.filter(announcement => {
+  useEffect(() => {
+    fetch('http://localhost:4000/api/announcements')
+      .then(res => res.json())
+      .then(data => setAnnouncements(data));
+  }, []);
+
+  const filteredAnnouncements = announcements.filter(announcement => {
     const matchesPriority = selectedPriority === 'all' || announcement.priority === selectedPriority;
     return matchesPriority;
   });
 
+  const priorities = ['all', 'high', 'medium', 'low'];
+  
   const getPriorityIcon = (priority: string) => {
     switch (priority) {
       case 'high':
